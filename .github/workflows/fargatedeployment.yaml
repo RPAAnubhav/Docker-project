@@ -56,7 +56,7 @@ jobs:
           AWS_REGION: us-east-1
           CLUSTER_NAME: my-ecs-cluster  # Change to your ECS cluster name
           SERVICE_NAME: my-ecs-service  # Change to your ECS service name
-          TASK_DEFINITION: my-ecs-task-revision2.json  # Path to your task definition
+          TASK_DEFINITION: my-ecs-task-revision3.json  # Path to your task definition
         run: |
           # Get latest task definition and replace image URI
           aws ecs describe-task-definition --task-definition $SERVICE_NAME --query taskDefinition > my-ecs-task-revision3.json

@@ -59,11 +59,11 @@ jobs:
           TASK_DEFINITION: my-ecs-task-revision2.json  # Path to your task definition
         run: |
           # Get latest task definition and replace image URI
-          aws ecs describe-task-definition --task-definition $SERVICE_NAME --query taskDefinition > task-definition.json
-          sed -i "s|<IMAGE_URI>|$IMAGE_URI|g" my-ecs-task-revision2.json
+          aws ecs describe-task-definition --task-definition $SERVICE_NAME --query taskDefinition > my-ecs-task-revision3.json
+          sed -i "s|<IMAGE_URI>|$IMAGE_URI|g" my-ecs-task-revision3.json
           
           # Register new task definition
-          NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://my-ecs-task-revision2.json --query 'taskDefinition.taskDefinitionArn' --output text)
+          NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://my-ecs-task-revision3.json --query 'taskDefinition.taskDefinitionArn' --output text)
           
           # Update ECS service with new task definition
           aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --task-definition $NEW_TASK_DEF_ARN         

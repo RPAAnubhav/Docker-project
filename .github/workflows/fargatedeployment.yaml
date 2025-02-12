@@ -37,7 +37,7 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
 
-      - name: Build, Tag, and Push Docker Image
+      - name: Build, Tag, and Push Docker Image to ECR
         env:
           ECR_REPOSITORY: my-java-app
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
@@ -48,3 +48,20 @@ jobs:
           docker tag $ECR_REPOSITORY:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
           echo "IMAGE_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
+	
+      - name: Deploy to ECS
+        env:
+          AWS_REGION: us-east-1
+          CLUSTER_NAME: my-ecs-cluster  # Change to your ECS cluster name
+          SERVICE_NAME: my-ecs-service  # Change to your ECS service name
+          TASK_DEFINITION: task-definition.json  # Path to your task definition
+        run: |
+          # Get latest task definition and replace image URI
+          aws ecs describe-task-definition --task-definition $SERVICE_NAME --query taskDefinition > task-definition.json
+          sed -i "s|<IMAGE_URI>|$IMAGE_URI|g" task-definition.json
+          
+          # Register new task definition
+          NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://task-definition.json --query 'taskDefinition.taskDefinitionArn' --output text)
+          
+          # Update ECS service with new task definition
+          aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --task-definition $NEW_TASK_DEF_ARN

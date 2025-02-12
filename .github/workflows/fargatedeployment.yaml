@@ -26,36 +26,34 @@ jobs:
       - name: Login to AWS ECR
         uses: aws-actions/amazon-ecr-login@v1
         env:
-            AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
 
-      # Step 5: Build and push Docker image to AWS ECR
       - name: Build, Tag, and Push Docker Image
         env:
           ECR_REPOSITORY: my-java-app  # Change to your ECR repo name
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          IMAGE_TAG=$(date +%Y%m%d%H%M%S)  # to generate a unique tag
+          IMAGE_TAG=$(date +%Y%m%d%H%M%S)  # Generate a unique tag
           docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
-          docker tag $ECR_REPOSITORY:$IMAGE_TAG $615299762140.dkr.ecr.$us-east-1.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $615299762140.dkr.ecr.$us-east-1.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "IMAGE_URI=$615299762140.dkr.ecr.$us-east-1.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "IMAGE_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
 
       - name: Deploy to ECS
         env:
           AWS_REGION: us-east-1
           CLUSTER_NAME: my-ecs-cluster
           SERVICE_NAME: my-ecs-service
-          TASK_FAMILY: my-ecs-task:3  
-          TASK_DEFINITION_FILE: my-ecs-task-revision3.json
+          TASK_FAMILY: my-ecs-task
+          TASK_DEFINITION_FILE: my-ecs-task-definition.json
         run: |
-        # Get latest task definition and replace image URI
+          # Get latest task definition and replace image URI
           aws ecs describe-task-definition --task-definition $TASK_FAMILY --query taskDefinition > $TASK_DEFINITION_FILE
           sed -i "s|<IMAGE_URI>|$IMAGE_URI|g" $TASK_DEFINITION_FILE
 
-        # Register new task definition
+          # Register new task definition
           NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://$TASK_DEFINITION_FILE --query 'taskDefinition.taskDefinitionArn' --output text)
 
-        # Update ECS service with new task definition
+          # Update ECS service with new task definition
           aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --task-definition $NEW_TASK_DEF_ARN
-

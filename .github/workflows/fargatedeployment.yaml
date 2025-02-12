@@ -49,23 +49,4 @@ jobs:
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
           echo "IMAGE_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
 
-      - name: Deploy to ECS
-        env:
-          AWS_REGION: us-east-1
-          CLUSTER_NAME: my-ecs-cluster
-          SERVICE_NAME: my-ecs-service
-          TASK_FAMILY: my-ecs-task
-          TASK_REVISION: my-ecs-task:3
-          TASK_DEFINITION_FILE: my-ecs-task-revision3.json
-        run: |
-          # Fetch the latest task definition
-          aws ecs describe-task-definition --task-definition $TASK_FAMILY --query taskDefinition > $TASK_DEFINITION_FILE
-
-          # Replace the image URI in the task definition file
-          sed -i "s|<IMAGE_URI>|$IMAGE_URI|g" $TASK_DEFINITION_FILE
-
-          # Register new task definition with updated image
-          NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://$TASK_DEFINITION_FILE --query 'taskDefinition.taskDefinitionArn' --output text)
-
-          # Update the ECS service with the new task definition
-          aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --task-definition $NEW_TASK_DEF_ARN
+    

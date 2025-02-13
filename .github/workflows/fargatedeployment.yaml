@@ -10,7 +10,7 @@ env:
   ECR_REPOSITORY: my-ecr-repository           # set this to your Amazon ECR repository name
   ECS_SERVICE: my-ecs-servicedemo             # set this to your Amazon ECS service name
   ECS_CLUSTER: my-ecs-cluster                 # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: .github/workflows/my-ecs-taskdefination-revision1.json  # set this to the path to your Amazon ECS task definition
+  ECS_TASK_DEFINITION: .Docker-project/my-ecs-taskdefination-revision1.json  # set this to the path to your Amazon ECS task definition
   CONTAINER_NAME: my-java-app                 # set this to the name of the container in the containerDefinitions section of your task definition
 
 jobs:

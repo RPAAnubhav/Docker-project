@@ -8,7 +8,7 @@ public class DemoController {
 
 	@GetMapping(value = "")
 	public String helloWorld() {
-		String s = "hello leo, alsi kutte!!";
+		String s = "hello leo, alsi kutte!!>>>> NEW UPDATE APPENDED!!!";
 		return s;
 	}
 }

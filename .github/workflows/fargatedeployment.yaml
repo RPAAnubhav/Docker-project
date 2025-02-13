@@ -39,7 +39,7 @@ jobs:
 
       - name: Build, Tag, and Push Docker Image
         env:
-          ECR_REPOSITORY: my-java-app
+          ECR_REPOSITORY: my-ecr-repository
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |

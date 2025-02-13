@@ -10,7 +10,7 @@ env:
   ECR_REPOSITORY: my-ecr-repository           
   ECS_SERVICE: my-ecs-servicedemo            
   ECS_CLUSTER: my-ecs-cluster                 
-  ECS_TASK_DEFINITION: Docker-project/my-ecs-taskdefination-revision1.json  
+  ECS_TASK_DEFINITION: my-ecs-taskdefination-revision1.json  
   CONTAINER_NAME: my-java-app                 
 
 jobs:

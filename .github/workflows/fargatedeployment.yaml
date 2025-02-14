@@ -22,8 +22,6 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean package -DskipTests
-             pwd
-             ls -larth
 
   push-image:
     name: Configure AWS and Push Docker Image

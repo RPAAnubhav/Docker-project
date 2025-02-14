@@ -67,7 +67,7 @@ jobs:
           IMAGE_TAG=latest
           sed -i "s|<IMAGE>|$ECR_REGISTRY/$IMAGE_TAG|g" task-definition.json
           echo "Updated task-definition.json"
-
+          
   deploy:
     name: Deploy to Amazon ECS
     runs-on: ubuntu-latest

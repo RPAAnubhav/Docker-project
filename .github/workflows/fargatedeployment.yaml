@@ -22,6 +22,8 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean package -DskipTests
+             pwd
+             ls -larth
 
   push-image:
     name: Configure AWS and Push Docker Image
@@ -46,6 +48,8 @@ jobs:
           ECR_REPOSITORY: my-ecr-repo
           IMAGE_TAG: latest
         run: |
+          pwd
+          ls -larth
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 

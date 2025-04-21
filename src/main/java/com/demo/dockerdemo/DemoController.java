@@ -8,7 +8,7 @@ public class DemoController {
 
 	@GetMapping(value = "")
 	public String helloWorld() {
-		String s = "hello leo, alsi kutte!!>>>> NEW UPDATE APPENDED!!!>>>Day2";
+		String s = "Datadog Actions workflow demo!!";
 		return s;
 	}
 }
